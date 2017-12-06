@@ -4,6 +4,7 @@ import com.kfc.kfconeone.RTDB.RTDataBase;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Unit test for simple App.
@@ -39,10 +40,4 @@ public class AppTest
         assertTrue( true );
     }
 
-    public void testGetElement()
-    {
-        db.AddElement("Rooms/Room1/kfconeone","CatRoom");
-        System.out.println(db.GetEntireDb());
-
-    }
 }
