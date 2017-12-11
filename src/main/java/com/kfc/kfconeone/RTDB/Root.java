@@ -1,8 +1,8 @@
 package com.kfc.kfconeone.RTDB;
 
-import com.google.gson.JsonObject;
 import org.springframework.data.annotation.Id;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 public class Root {
@@ -11,5 +11,5 @@ public class Root {
 
     public Object detail;
     String tableId;
-    ArrayList sessionIds = new ArrayList();
+    ArrayList<String> sessionIds = new ArrayList<>();
 }
