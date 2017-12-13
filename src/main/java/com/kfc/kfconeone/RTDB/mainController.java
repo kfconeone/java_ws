@@ -9,8 +9,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +50,7 @@ public class mainController {
         Root newRoot = new Root();
 
         newRoot.detail = gson.fromJson(req.get("detail").toString(),Object.class);
+        newRoot.pushArray = new ArrayList<>();
         newRoot.tableId = req.get("tableId").getAsString();
         rootRepository.save(newRoot);
 
@@ -109,7 +108,7 @@ public class mainController {
                 if(session.isOpen())
                 {
                     Map<String,Object> msg = new HashMap<>();
-                    msg.put("event",req.get("event"));
+                    msg.put("tableId",req.get("tableId"));
                     msg.put("detail",mObject.detail);
                     session.sendMessage(new TextMessage(new Gson().toJson(msg)));
                 }
@@ -123,6 +122,9 @@ public class mainController {
         res.put("message","success");
         return res;
     }
+
+
+
 
     @RequestMapping(path = "/Delete" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
     public @ResponseBody
@@ -143,6 +145,7 @@ public class mainController {
 
         Map<String,Object> resToPlayer = new HashMap<>();
         resToPlayer.put("result","100");
+        resToPlayer.put("tableId",req.get("tableId"));
         resToPlayer.put("message","table is remove");
         for (Object sessionName :mObject.sessionIds)
         {

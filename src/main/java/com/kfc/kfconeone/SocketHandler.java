@@ -45,7 +45,7 @@ public class SocketHandler extends TextWebSocketHandler {
         Map<String,Object> res = new HashMap<>();
         Resource resource = new ClassPathResource("/zone.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
-        res.put("event","connect");
+        res.put("tableId","CONNECT");
         res.put("sessionId",uuid);
         res.put("zone",props.getProperty("zone"));
         session.sendMessage(new TextMessage(new Gson().toJson(res)));
