@@ -12,10 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class SocketHandler extends TextWebSocketHandler {
@@ -42,12 +39,24 @@ public class SocketHandler extends TextWebSocketHandler {
         sessionMap.put(uuid,session);
         System.out.println(uuid);
 
+
+        if(sessionMap.size() > 100)
+        {
+            for (String sessionName : sessionMap.keySet())
+            {
+                if(!sessionMap.get(sessionName).isOpen())
+                {
+                    sessionMap.remove(sessionName);
+                }
+            }
+        }
+
         Map<String,Object> res = new HashMap<>();
-        Resource resource = new ClassPathResource("/zone.properties");
-        Properties props = PropertiesLoaderUtils.loadProperties(resource);
+//        Resource resource = new ClassPathResource("/zone.properties");
+//        Properties props = PropertiesLoaderUtils.loadProperties(resource);
         res.put("tableId","CONNECT");
         res.put("sessionId",uuid);
-        res.put("zone",props.getProperty("zone"));
+//        res.put("zone",props.getProperty("zone"));
         session.sendMessage(new TextMessage(new Gson().toJson(res)));
     }
 }

@@ -100,11 +100,12 @@ public class mainController {
         }
         mObject.detail = gson.fromJson(req.get("detail").toString(),Object.class);
 
-        for (Object sessionName :mObject.sessionIds)
+        ArrayList<String> removeList = new ArrayList<>();
+        for (String sessionName :mObject.sessionIds)
         {
-            if(SocketHandler.sessionMap.containsKey(sessionName.toString()))
+            if(SocketHandler.sessionMap.containsKey(sessionName))
             {
-                WebSocketSession session = SocketHandler.sessionMap.get(sessionName.toString());
+                WebSocketSession session = SocketHandler.sessionMap.get(sessionName);
                 if(session.isOpen())
                 {
                     Map<String,Object> msg = new HashMap<>();
@@ -112,9 +113,18 @@ public class mainController {
                     msg.put("detail",mObject.detail);
                     session.sendMessage(new TextMessage(new Gson().toJson(msg)));
                 }
-
+                else
+                {
+                    removeList.add(sessionName);
+                }
+            }
+            else
+            {
+                removeList.add(sessionName);
             }
         }
+        mObject.sessionIds.removeAll(removeList);
+
         rootRepository.save(mObject);
 
 
