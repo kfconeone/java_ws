@@ -6,6 +6,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+
 /**
  * Unit test for simple App.
  */
@@ -37,6 +39,14 @@ public class AppTest
      */
     public void testApp()
     {
+        ArrayList<Integer> arr = new ArrayList<>();
+        for(int i = 0;i < 13;++i)
+        {
+            arr.add(i);
+        }
+
+        System.out.println(arr);
+        System.out.println(arr.subList(arr.size()-10,arr.size()));
         assertTrue( true );
     }
 

@@ -3,9 +3,6 @@ package com.kfc.kfconeone;
 import com.google.gson.Gson;
 import com.kfc.kfconeone.RTDB.RootRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -39,15 +36,20 @@ public class SocketHandler extends TextWebSocketHandler {
         sessionMap.put(uuid,session);
         System.out.println(uuid);
 
-
-        if(sessionMap.size() > 100)
+        ArrayList<String> removeList = new ArrayList<>();
+        if(sessionMap.size() > 3)
         {
             for (String sessionName : sessionMap.keySet())
             {
                 if(!sessionMap.get(sessionName).isOpen())
                 {
-                    sessionMap.remove(sessionName);
+                    removeList.add(sessionName);
                 }
+            }
+
+            for (String sessionName : removeList)
+            {
+                sessionMap.remove(sessionName);
             }
         }
 

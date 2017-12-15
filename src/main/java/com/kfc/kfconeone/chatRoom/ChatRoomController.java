@@ -64,7 +64,7 @@ public class ChatRoomController {
         }
         else
         {
-            mObject.detail = tempPushArray.subList(tempPushArray.size() - 11,tempPushArray.size() - 1);
+            mObject.detail = tempPushArray.subList(tempPushArray.size() - 10,tempPushArray.size());
         }
 
         //step 4 : 超過一定筆數，就紀錄聊天訊息
@@ -74,7 +74,7 @@ public class ChatRoomController {
             try (FileWriter writer = new FileWriter(String.format("%s%s",fileName,"ChatRoomBackup.txt")))
             {
                 writer.write(new Gson().toJson(tempPushArray));
-                mObject.pushArray = new ArrayList<>(tempPushArray.subList(tempPushArray.size() - 11,tempPushArray.size() - 1));
+                mObject.pushArray = new ArrayList<>(tempPushArray.subList(tempPushArray.size() - 10,tempPushArray.size()));
             }
         }
         else
