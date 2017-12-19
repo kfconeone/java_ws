@@ -10,6 +10,6 @@ public class Root {
 
     public Object detail;
     public ArrayList<Object> pushArray;
-    String tableId;
+    public String tableId;
     public ArrayList<String> sessionIds = new ArrayList<>();
 }

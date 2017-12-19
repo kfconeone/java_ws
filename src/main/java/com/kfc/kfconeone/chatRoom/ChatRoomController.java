@@ -17,6 +17,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController     //必加Annotation，告知Spring這個Class是Controller
@@ -71,7 +72,7 @@ public class ChatRoomController {
         if(tempPushArray.size() > 200)
         {
             String fileName = DateTimeFormatter.ofPattern("yyyymmdd_hhmmss").format(ZonedDateTime.now(ZoneOffset.UTC));
-            try (FileWriter writer = new FileWriter(String.format("%s%s",fileName,"ChatRoomBackup.txt")))
+            try (FileWriter writer = new FileWriter(String.format("%s%s",fileName,"LobbyChatRoomBackup.txt")))
             {
                 writer.write(new Gson().toJson(tempPushArray));
                 mObject.pushArray = new ArrayList<>(tempPushArray.subList(tempPushArray.size() - 10,tempPushArray.size()));
@@ -111,6 +112,53 @@ public class ChatRoomController {
         mObject.sessionIds.removeAll(removeList);
 
         rootRepository.save(mObject);
+
+
+        res.put("result","000");
+        res.put("message","success");
+        return res;
+    }
+
+
+    @RequestMapping(path = "/BackUpDb" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
+    public @ResponseBody
+    Map BackUpAllTable() throws IOException
+    {
+
+        Map<String,Object> res = new HashMap<>();
+        List<Root> allTable = rootRepository.findAll();
+        Gson gson = new Gson();
+
+        String fileName = DateTimeFormatter.ofPattern("yyyymmdd_hhmmss").format(ZonedDateTime.now(ZoneOffset.UTC));
+        try (FileWriter writer = new FileWriter(String.format("%s%s",fileName,"AllTableBackUp.txt")))
+        {
+            writer.write(gson.toJson(allTable));
+        }
+
+        res.put("result","000");
+        return res;
+    }
+
+    @RequestMapping(path = "/CreateLobbyChatRoom" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
+    public @ResponseBody
+    Map CreateLobbyChatRoom() throws IOException
+    {
+        Map<String,Object> res = new HashMap<>();
+        Gson gson = new Gson();
+
+        if(rootRepository.findByTableId("LobbyChatRoom") != null)
+        {
+            res.put("result","001");
+            res.put("message","table exists");
+            return res;
+        }
+
+        Root newRoot = new Root();
+
+        newRoot.detail = gson.fromJson("{}",Object.class);
+        newRoot.pushArray = new ArrayList<>();
+        newRoot.tableId = "LobbyChatRoom";
+        rootRepository.save(newRoot);
 
 
         res.put("result","000");
