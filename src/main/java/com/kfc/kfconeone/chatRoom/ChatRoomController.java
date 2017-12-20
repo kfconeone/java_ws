@@ -31,113 +31,6 @@ public class ChatRoomController {
     }
 
 
-    @SuppressWarnings("unchecked")
-    @RequestMapping(path = "/Push" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
-    public @ResponseBody
-    Map Push(@RequestBody String _req) throws InterruptedException, IOException {
-        //step 1 : 解析收到的request
-        Map<String,Object> res = new HashMap<>();
-        Gson gson = new Gson();
-        JsonObject req = gson.fromJson(_req,JsonObject.class);
-
-        //step 2 :檢查有沒有這張桌子，沒有就直接回傳訊息
-        String tableId = req.get("tableId").getAsString();
-        Root mObject = rootRepository.findByTableId(tableId);
-        if(mObject == null)
-        {
-            res.put("result","001");
-            res.put("message","table not exists");
-            return res;
-        }
-
-        //step 3 : 將資料庫中的table取出後，把request中的訊息給加上去
-        //pushArray會留存全部訊息，而detail中止會留存最新十條
-        ArrayList<Object> tempPushArray;
-        tempPushArray = gson.fromJson(new Gson().toJson(mObject.pushArray),ArrayList.class);
-
-        Object pushObject = gson.fromJson(req.get("pushObject").toString(),Object.class);
-        tempPushArray.add(pushObject);
-
-
-        if(tempPushArray.size() < 11)
-        {
-            mObject.detail = tempPushArray;
-        }
-        else
-        {
-            mObject.detail = tempPushArray.subList(tempPushArray.size() - 10,tempPushArray.size());
-        }
-
-        //step 4 : 超過一定筆數，就紀錄聊天訊息
-        if(tempPushArray.size() > 200)
-        {
-            String fileName = DateTimeFormatter.ofPattern("yyyymmdd_hhmmss").format(ZonedDateTime.now(ZoneOffset.UTC));
-            try (FileWriter writer = new FileWriter(String.format("%s%s",fileName,"LobbyChatRoomBackup.txt")))
-            {
-                writer.write(new Gson().toJson(tempPushArray));
-                mObject.pushArray = new ArrayList<>(tempPushArray.subList(tempPushArray.size() - 10,tempPushArray.size()));
-            }
-        }
-        else
-        {
-            mObject.pushArray = tempPushArray;
-        }
-
-        //step 5 : 將訊息回傳給所有註冊桌子的使用者，如果session不存在，
-        //則加到removeList中，迴圈後刪除
-        ArrayList<String> removeList = new ArrayList<>();
-        for (String sessionName : mObject.sessionIds)
-        {
-            if(SocketHandler.sessionMap.containsKey(sessionName))
-            {
-                WebSocketSession session = SocketHandler.sessionMap.get(sessionName);
-                if(session.isOpen())
-                {
-                    Map<String,Object> msg = new HashMap<>();
-                    msg.put("tableId",req.get("tableId"));
-                    msg.put("pushObject",pushObject);
-                    session.sendMessage(new TextMessage(new Gson().toJson(msg)));
-                }
-                else
-                {
-                    removeList.add(sessionName);
-                }
-            }
-            else
-            {
-                removeList.add(sessionName);
-            }
-        }
-
-        mObject.sessionIds.removeAll(removeList);
-
-        rootRepository.save(mObject);
-
-
-        res.put("result","000");
-        res.put("message","success");
-        return res;
-    }
-
-
-    @RequestMapping(path = "/BackUpDb" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
-    public @ResponseBody
-    Map BackUpAllTable() throws IOException
-    {
-
-        Map<String,Object> res = new HashMap<>();
-        List<Root> allTable = rootRepository.findAll();
-        Gson gson = new Gson();
-
-        String fileName = DateTimeFormatter.ofPattern("yyyymmdd_hhmmss").format(ZonedDateTime.now(ZoneOffset.UTC));
-        try (FileWriter writer = new FileWriter(String.format("%s%s",fileName,"AllTableBackUp.txt")))
-        {
-            writer.write(gson.toJson(allTable));
-        }
-
-        res.put("result","000");
-        return res;
-    }
 
     @RequestMapping(path = "/CreateLobbyChatRoom" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
     public @ResponseBody
@@ -158,6 +51,7 @@ public class ChatRoomController {
         newRoot.detail = gson.fromJson("{}",Object.class);
         newRoot.pushArray = new ArrayList<>();
         newRoot.tableId = "LobbyChatRoom";
+        newRoot.isQueueTable = true;
         rootRepository.save(newRoot);
 
 

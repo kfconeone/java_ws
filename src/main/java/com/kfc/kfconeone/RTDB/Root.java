@@ -12,4 +12,5 @@ public class Root {
     public ArrayList<Object> pushArray;
     public String tableId;
     public ArrayList<String> sessionIds = new ArrayList<>();
+    public boolean isQueueTable = false;
 }

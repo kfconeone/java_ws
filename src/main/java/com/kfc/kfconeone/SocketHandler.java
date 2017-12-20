@@ -37,7 +37,7 @@ public class SocketHandler extends TextWebSocketHandler {
         System.out.println(uuid);
 
         ArrayList<String> removeList = new ArrayList<>();
-        if(sessionMap.size() > 3)
+        if(sessionMap.size() > 300)
         {
             for (String sessionName : sessionMap.keySet())
             {
