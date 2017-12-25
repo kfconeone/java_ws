@@ -11,6 +11,9 @@ public class Root {
     public Object detail;
     public ArrayList<Object> pushArray;
     public String tableId;
-    public ArrayList<String> sessionIds = new ArrayList<>();
+    ArrayList<String> sessionIds = new ArrayList<>();
     public boolean isQueueTable = false;
+    public int pushArrayBound = 200;
+    public int pushTableDetailLength = 10;
+    public int subscribedSessionBound = 100;
 }

@@ -61,6 +61,10 @@ public class mainController {
         newRoot.detail = gson.fromJson(req.get("detail").toString(),Object.class);
         newRoot.pushArray = new ArrayList<>();
         newRoot.tableId = req.get("tableId").getAsString();
+        //檢查有沒有決定Table是否Queue型態
+        if(req.has("isQueueTable")) newRoot.isQueueTable = req.get("isQueueTable").getAsBoolean();
+        if(req.has("subscribedSessionBound")) newRoot.subscribedSessionBound = req.get("subscribedSessionBound").getAsInt();
+
         rootRepository.save(newRoot);
 
 
@@ -228,23 +232,23 @@ public class mainController {
         tempPushArray.add(pushObject);
 
 
-        if(tempPushArray.size() < 11)
+        if(tempPushArray.size() < (mObject.pushTableDetailLength + 1))
         {
             mObject.detail = tempPushArray;
         }
         else
         {
-            mObject.detail = tempPushArray.subList(tempPushArray.size() - 10,tempPushArray.size());
+            mObject.detail = tempPushArray.subList(tempPushArray.size() - mObject.pushTableDetailLength,tempPushArray.size());
         }
 
         //step 4 : 超過一定筆數，就紀錄聊天訊息
-        if(tempPushArray.size() > 200)
+        if(tempPushArray.size() > mObject.pushArrayBound)
         {
             String fileName = DateTimeFormatter.ofPattern("yyyymmdd_hhmmss").format(ZonedDateTime.now(ZoneOffset.UTC));
-            try (FileWriter writer = new FileWriter(String.format("%s%s",fileName,"LobbyChatRoomBackup.txt")))
+            try (FileWriter writer = new FileWriter(String.format("%s_%s_%s",fileName,tableId,"Backup.txt")))
             {
                 writer.write(new Gson().toJson(tempPushArray));
-                mObject.pushArray = new ArrayList<>(tempPushArray.subList(tempPushArray.size() - 10,tempPushArray.size()));
+                mObject.pushArray = new ArrayList<>(tempPushArray.subList(tempPushArray.size() - mObject.pushTableDetailLength,tempPushArray.size()));
             }
         }
         else
@@ -299,7 +303,7 @@ public class mainController {
         Gson gson = new Gson();
 
         String fileName = DateTimeFormatter.ofPattern("yyyymmdd_hhmmss").format(ZonedDateTime.now(ZoneOffset.UTC));
-        try (FileWriter writer = new FileWriter(String.format("%s%s",fileName,"AllTableBackUp.txt")))
+        try (FileWriter writer = new FileWriter(String.format("%s_%s",fileName,"AllTable_BackUp.txt")))
         {
             writer.write(gson.toJson(allTable));
         }
@@ -307,6 +311,38 @@ public class mainController {
         res.put("result","000");
         return res;
     }
+
+    //改變桌子的設定，會將所有的detail和pushArray還原。
+    @RequestMapping(path = "/ChangeConfig" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
+    public @ResponseBody
+    Map ChangeConfig(@RequestBody String _req) throws InterruptedException, IOException {
+
+        Map<String,Object> res = new HashMap<>();
+        Gson gson = new Gson();
+        JsonObject req = gson.fromJson(_req,JsonObject.class);
+
+        String tableId = req.get("tableId").getAsString();
+        Root mObject = rootRepository.findByTableId(tableId);
+        if(mObject == null)
+        {
+            res.put("result","001");
+            res.put("message","table not exists");
+            return res;
+        }
+
+        if(req.has("isQueueTable")) mObject.isQueueTable = req.get("isQueueTable").getAsBoolean();
+        if(req.has("pushArrayBound")) mObject.pushArrayBound = req.get("pushArrayBound").getAsInt();
+        if(req.has("pushTableDetailLength")) mObject.pushTableDetailLength = req.get("pushTableDetailLength").getAsInt();
+        if(req.has("subscribedSessionBound")) mObject.subscribedSessionBound = req.get("subscribedSessionBound").getAsInt();
+
+
+        rootRepository.save(mObject);
+
+        res.put("result","000");
+        res.put("message","success");
+        return res;
+    }
+
 
 
 
@@ -380,7 +416,7 @@ Map DeleteBySessions() throws InterruptedException, IOException {
         }
 
         //當桌面上註冊的sessionId超過一定數量，進行檢查把斷線的給刪除
-        if(mObject.sessionIds.size() > 100)
+        if(mObject.sessionIds.size() > mObject.subscribedSessionBound)
         {
             ArrayList<String> removeList = new ArrayList<>();
             for (String sessionId : mObject.sessionIds)

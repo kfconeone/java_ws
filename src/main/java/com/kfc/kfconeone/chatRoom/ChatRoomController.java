@@ -1,23 +1,14 @@
 package com.kfc.kfconeone.chatRoom;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.kfc.kfconeone.RTDB.Root;
 import com.kfc.kfconeone.RTDB.RootRepository;
-import com.kfc.kfconeone.SocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController     //必加Annotation，告知Spring這個Class是Controller
