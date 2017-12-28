@@ -56,9 +56,16 @@ public class mainController {
 
         Root newRoot = new Root();
 
-        newRoot.detail = gson.fromJson(req.get("detail").toString(),Object.class);
+        //注意，不用括號的字串轉成object，mongo有bug存不進去
+        if(req.has("detail")) newRoot.detail = gson.fromJson(req.get("detail").toString(),Object.class);
+        else newRoot.detail = gson.fromJson("{}",Object.class);
+
         newRoot.pushArray = new ArrayList<>();
         newRoot.tableId = req.get("tableId").getAsString();
+        //建立一個private的detail，面向伺服器端，使用者端不可見
+        if(req.has("privateDetail")) newRoot.detail = gson.fromJson(req.get("privateDetail").toString(),Object.class);
+        else newRoot.detail = gson.fromJson("{}",Object.class);
+
         //檢查有沒有決定Table是否Queue型態
         if(req.has("isQueueTable")) newRoot.isQueueTable = req.get("isQueueTable").getAsBoolean();
         if(req.has("subscribedSessionBound")) newRoot.subscribedSessionBound = req.get("subscribedSessionBound").getAsInt();
@@ -71,9 +78,9 @@ public class mainController {
         return res;
     }
 
-    @RequestMapping(path = "/Read" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
+    @RequestMapping(path = "/Read{optionalParameter}" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
     public @ResponseBody
-    Map Read(@RequestBody String _req) {
+    Map Read(@RequestBody String _req,@PathVariable(name = "optionalParameter") String _optionalParameter) {
 
         Map<String,Object> res = new HashMap<>();
         Gson gson = new Gson();
@@ -90,12 +97,15 @@ public class mainController {
 
         res.put("result","000");
         res.put("detail",mObject.detail);
+        if(_optionalParameter.equals("Superior")) res.put("privateDetail",mObject.privateDetail);
+
         return res;
     }
 
-    @RequestMapping(path = "/Update" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
+
+    @RequestMapping(path = "/Update{optionalParameter}" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
     public @ResponseBody
-    Map Update(@RequestBody String _req) throws InterruptedException, IOException {
+    Map Update(@RequestBody String _req,@PathVariable(name = "optionalParameter") String _optionalParameter) throws InterruptedException, IOException {
 
         Map<String,Object> res = new HashMap<>();
         Gson gson = new Gson();
@@ -118,6 +128,13 @@ public class mainController {
         }
 
         mObject.detail = gson.fromJson(req.get("detail").toString(),Object.class);
+        if(_optionalParameter.equals("Superior"))
+        {
+            if(req.has("privateDetail"))
+            {
+                mObject.privateDetail = gson.fromJson(req.get("privateDetail").toString(),Object.class);
+            }
+        }
 
         ArrayList<String> removeList = new ArrayList<>();
         for (String sessionName :mObject.sessionIds)

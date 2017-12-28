@@ -9,6 +9,7 @@ public class Root {
     public String id;
 
     public Object detail;
+    public Object privateDetail;
     public ArrayList<Object> pushArray;
     public String tableId;
     ArrayList<String> sessionIds = new ArrayList<>();

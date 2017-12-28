@@ -39,7 +39,9 @@ public class ChatRoomController {
 
         Root newRoot = new Root();
 
+        //直接new Object()會出錯
         newRoot.detail = gson.fromJson("{}",Object.class);
+        newRoot.privateDetail = gson.fromJson("{}",Object.class);
         newRoot.pushArray = new ArrayList<>();
         newRoot.tableId = "LobbyChatRoom";
         newRoot.isQueueTable = true;
