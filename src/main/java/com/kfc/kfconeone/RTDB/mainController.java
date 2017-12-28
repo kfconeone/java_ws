@@ -8,15 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController     //必加Annotation，告知Spring這個Class是Controller
 public class mainController {
@@ -244,7 +242,13 @@ public class mainController {
         //step 4 : 超過一定筆數，就紀錄聊天訊息
         if(tempPushArray.size() > mObject.pushArrayBound)
         {
-            String fileName = DateTimeFormatter.ofPattern("yyyymmdd_hhmmss").format(ZonedDateTime.now(ZoneOffset.UTC));
+            String fileName = DateTimeFormatter.ofPattern("yyyyMMdd_hhmmss").format(ZonedDateTime.now(ZoneOffset.UTC).plusHours(8));
+
+            if(new File(fileName).exists())
+            {
+                fileName += UUID.randomUUID();
+            }
+
             try (FileWriter writer = new FileWriter(String.format("%s_%s_%s",fileName,tableId,"Backup.txt")))
             {
                 writer.write(new Gson().toJson(tempPushArray));
@@ -302,7 +306,13 @@ public class mainController {
         List<Root> allTable = rootRepository.findAll();
         Gson gson = new Gson();
 
-        String fileName = DateTimeFormatter.ofPattern("yyyymmdd_hhmmss").format(ZonedDateTime.now(ZoneOffset.UTC));
+        String fileName = DateTimeFormatter.ofPattern("yyyyMMdd_hhmmss").format(ZonedDateTime.now(ZoneOffset.UTC).plusHours(8));
+
+        if(new File(fileName).exists())
+        {
+            fileName += UUID.randomUUID();
+        }
+
         try (FileWriter writer = new FileWriter(String.format("%s_%s",fileName,"AllTable_BackUp.txt")))
         {
             writer.write(gson.toJson(allTable));
