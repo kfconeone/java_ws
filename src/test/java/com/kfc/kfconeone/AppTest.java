@@ -1,12 +1,21 @@
 package com.kfc.kfconeone;
 
+// Imports the Google Cloud client library
+import com.google.api.gax.paging.Page;
+import com.google.cloud.storage.*;
 import com.kfc.kfconeone.RTDB.RTDataBase;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.springframework.beans.factory.annotation.Autowired;
+import sun.misc.IOUtils;
+import sun.nio.ch.IOUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.sql.Blob;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 
 /**
  * Unit test for simple App.
@@ -37,16 +46,10 @@ public class AppTest
     /**
      * Rigourous Test :-)
      */
-    public void testApp()
+    public void testApp() throws Exception
     {
-        ArrayList<Integer> arr = new ArrayList<>();
-        for(int i = 0;i < 13;++i)
-        {
-            arr.add(i);
-        }
+        
 
-        System.out.println(arr);
-        System.out.println(arr.subList(arr.size()-10,arr.size()));
         assertTrue( true );
     }
 
