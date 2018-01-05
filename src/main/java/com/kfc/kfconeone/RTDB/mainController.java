@@ -16,6 +16,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@CrossOrigin(origins = "*")
 @RestController     //必加Annotation，告知Spring這個Class是Controller
 public class mainController {
 
