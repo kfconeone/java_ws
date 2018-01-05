@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = "*")
 @RestController     //必加Annotation，告知Spring這個Class是Controller
 public class ChatRoomController {
 
