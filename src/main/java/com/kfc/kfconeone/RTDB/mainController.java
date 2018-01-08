@@ -128,6 +128,13 @@ public class mainController {
             return res;
         }
 
+        if(!req.has("detail"))
+        {
+            res.put("result","003");
+            res.put("message","missing key [detail], please check your request json");
+            return res;
+        }
+
         mObject.detail = gson.fromJson(req.get("detail").toString(),Object.class);
         if(_optionalParameter.equals("Superior"))
         {
