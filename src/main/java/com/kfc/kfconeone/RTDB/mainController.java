@@ -78,29 +78,34 @@ public class mainController {
         return res;
     }
 
-    @RequestMapping(path = "/Read{optionalParameter}" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
-    public @ResponseBody
-    Map Read(@RequestBody String _req,@PathVariable(name = "optionalParameter") String _optionalParameter) {
-
-        Map<String,Object> res = new HashMap<>();
-        Gson gson = new Gson();
-        JsonObject req = gson.fromJson(_req,JsonObject.class);
-
-        String tableId = req.get("tableId").getAsString();
-        Root mObject = rootRepository.findByTableId(tableId);
-        if(mObject == null)
-        {
-            res.put("result","001");
-            res.put("message","table not exists");
-            return res;
-        }
-
-        res.put("result","000");
-        res.put("detail",mObject.detail);
-        if(_optionalParameter.equals("Superior")) res.put("privateDetail",mObject.privateDetail);
-
-        return res;
-    }
+//    @RequestMapping(path = "/Read{optionalParameter}" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
+//    public @ResponseBody
+//    Map Read(@RequestBody String _req,@PathVariable(name = "optionalParameter") String _optionalParameter) {
+//
+//        Map<String,Object> res = new HashMap<>();
+//        Gson gson = new Gson();
+//        JsonObject req = gson.fromJson(_req,JsonObject.class);
+//
+//        String tableId = req.get("tableId").getAsString();
+//        Root mObject = rootRepository.findByTableId(tableId);
+//        if(mObject == null)
+//        {
+//            res.put("result","001");
+//            res.put("message","table not exists");
+//            return res;
+//        }
+//
+//        res.put("result","000");
+//        res.put("detail",mObject.detail);
+//        if(_optionalParameter.equals("Superior"))
+//        {
+//            res.put("privateDetail",mObject.privateDetail);
+//            res.put("isQueueTable",mObject.isQueueTable);
+//            res.put("pushTableDetailLength",mObject.pushTableDetailLength);
+//            res.put("pushArrayBound",mObject.pushArrayBound);
+//        }
+//        return res;
+//    }
 
 
     @RequestMapping(path = "/Update{optionalParameter}" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
