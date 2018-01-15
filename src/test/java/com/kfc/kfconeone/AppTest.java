@@ -1,10 +1,8 @@
 package com.kfc.kfconeone;
 
-import com.kfc.kfconeone.RTDB.RTDataBase;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
@@ -19,11 +17,9 @@ public class AppTest
      *
      * @param testName name of the test case
      */
-    RTDataBase db;
     public AppTest( String testName )
     {
         super( testName );
-        db = new RTDataBase();
     }
 
     /**
