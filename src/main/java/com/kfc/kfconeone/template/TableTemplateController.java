@@ -3,6 +3,7 @@ package com.kfc.kfconeone.template;
 import com.google.gson.Gson;
 import com.kfc.kfconeone.RTDB.Root;
 import com.kfc.kfconeone.RTDB.RootRepository;
+import com.kfc.kfconeone.SocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,10 +46,10 @@ public class TableTemplateController {
         }
 
         ArrayList<String> ApiExamples = new ArrayList<>();
-        ApiExamples.add("http://localhost:8081/CreateTemplateTable?tableId=testing&isQueueTable=true&pushArrayBound=100&pushTableDetailLength=15&subscribedSessionBound=120");
-        ApiExamples.add("http://localhost:8081/DeleteTable?tableId=testing");
-        ApiExamples.add("http://localhost:8081/ReadTable?tableId=testing");
-        ApiExamples.add("http://localhost:8081/ReadTableSuperior?tableId=testing");
+        ApiExamples.add("http://localhost:8081/CreateTemplateTable?tableId=[TABLE_ID]&isQueueTable=true&pushArrayBound=100&pushTableDetailLength=15&subscribedSessionBound=120");
+        ApiExamples.add("http://localhost:8081/DeleteTable?tableId=[TABLE_ID]");
+        ApiExamples.add("http://localhost:8081/ReadTable?tableId=[TABLE_ID]");
+        ApiExamples.add("http://localhost:8081/ReadTableSuperior?tableId=[TABLE_ID]");
 
         res.put("result","000");
         res.put("message","success");
@@ -142,4 +143,49 @@ public class TableTemplateController {
         return res;
     }
 
+
+    //檢查session是否還存活，如果已經死亡則刪除
+    @RequestMapping(path = "/GetSessionAliveStatus" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
+    public @ResponseBody
+    Map GetConnectionStatus(@RequestParam(value="tableId") String _tableId) {
+
+        Map<String,Object> res = new HashMap<>();
+
+        Root mObject = rootRepository.findByTableId(_tableId);
+        if(mObject == null)
+        {
+            res.put("result","001");
+            res.put("message","table not exists");
+            return res;
+        }
+
+        ArrayList<String> removeList = new ArrayList<>();
+        Map<String,Boolean> status = new HashMap<>();
+        for (String sessionId : mObject.sessionIds)
+        {
+            if(SocketHandler.sessionMap.containsKey(sessionId))
+            {
+                if(SocketHandler.sessionMap.get(sessionId).isOpen())
+                {
+                    status.put(sessionId,true);
+                }
+                else
+                {
+                    status.put(sessionId,false);
+                    SocketHandler.sessionMap.remove(sessionId);
+                    removeList.add(sessionId);
+                }
+            }
+            else
+            {
+                status.put(sessionId,false);
+                removeList.add(sessionId);
+            }
+        }
+
+        mObject.sessionIds.removeAll(removeList);
+        rootRepository.save(mObject);
+        res.put("status",status);
+        return res;
+    }
 }

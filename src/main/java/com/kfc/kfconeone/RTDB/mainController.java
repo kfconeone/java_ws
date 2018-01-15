@@ -376,48 +376,6 @@ public class mainController {
     }
 
 
-
-
-    //    以下是依照桌內是否有玩家決定刪桌
-@RequestMapping(path = "/DeleteBySessions" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
-public @ResponseBody
-Map DeleteBySessions() throws InterruptedException, IOException {
-
-    Map<String,Object> res = new HashMap<>();
-
-    //先檢查所有的sessions有沒有已經斷線的，已經斷線的就直接移除
-    for(String sessionKey : SocketHandler.sessionMap.keySet())
-    {
-        if(!SocketHandler.sessionMap.get(sessionKey).isOpen())
-        {
-            System.out.println(sessionKey);
-            SocketHandler.sessionMap.remove(sessionKey);
-        }
-    }
-
-    List<Root> allTable = rootRepository.findAll();
-    for(Root table : allTable)
-    {
-        ArrayList<String> tempSessionList = new ArrayList<>();
-        for(String sessionId : table.sessionIds)
-        {
-            if(SocketHandler.sessionMap.containsKey(sessionId))
-            {
-                tempSessionList.add(sessionId);
-            }
-        }
-
-        if(tempSessionList.isEmpty())
-        {
-            rootRepository.delete(table);
-        }
-    }
-
-    res.put("result","000");
-    res.put("message","success");
-    return res;
-}
-
 //    以下是Client端要使用的接口
     @RequestMapping(path = "/Subscribe" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
     public @ResponseBody

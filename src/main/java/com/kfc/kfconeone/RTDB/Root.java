@@ -12,7 +12,7 @@ public class Root {
     public Object privateDetail;
     public ArrayList<Object> pushArray;
     public String tableId;
-    ArrayList<String> sessionIds = new ArrayList<>();
+    public ArrayList<String> sessionIds = new ArrayList<>();
     public boolean isQueueTable = false;
     public int pushArrayBound = 200;
     public int pushTableDetailLength = 10;
