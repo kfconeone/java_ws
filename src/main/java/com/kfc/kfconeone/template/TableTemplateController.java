@@ -50,6 +50,7 @@ public class TableTemplateController {
         ApiExamples.add("http://localhost:8081/DeleteTable?tableId=[TABLE_ID]");
         ApiExamples.add("http://localhost:8081/ReadTable?tableId=[TABLE_ID]");
         ApiExamples.add("http://localhost:8081/ReadTableSuperior?tableId=[TABLE_ID]");
+        ApiExamples.add("http://localhost:8081/GetSessionAliveStatus?tableId=[TABLE_ID]");
 
         res.put("result","000");
         res.put("message","success");
@@ -109,7 +110,7 @@ public class TableTemplateController {
             return res;
         }
 
-        rootRepository.delete(mObject.id);
+        rootRepository.delete(mObject);
 
         res.put("result","000");
         res.put("message","table removed successfully");

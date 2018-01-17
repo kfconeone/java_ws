@@ -209,7 +209,7 @@ public class mainController {
                 }
             }
         }
-        rootRepository.delete(mObject.id);
+        rootRepository.delete(mObject);
 
 
         res.put("result","000");
@@ -397,6 +397,7 @@ public class mainController {
         if (!mObject.sessionIds.contains(req.get("sessionId").getAsString()))
         {
             mObject.sessionIds.add(req.get("sessionId").getAsString());
+            res.put("sessionId",req.get("sessionId").getAsString());
         }
         else
         {
