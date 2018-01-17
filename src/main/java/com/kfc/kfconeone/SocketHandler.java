@@ -2,19 +2,19 @@ package com.kfc.kfconeone;
 
 import com.google.gson.Gson;
 import com.kfc.kfconeone.RTDB.RootRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
 @Component
 public class SocketHandler extends TextWebSocketHandler {
 
-    @Autowired
+    @Resource
     private RootRepository rootRepository;
 
     public static Map<String,WebSocketSession> sessionMap = new HashMap<>();

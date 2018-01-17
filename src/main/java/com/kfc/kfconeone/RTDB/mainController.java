@@ -3,11 +3,11 @@ package com.kfc.kfconeone.RTDB;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.kfc.kfconeone.SocketHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,12 +19,14 @@ import java.util.*;
 @RestController     //必加Annotation，告知Spring這個Class是Controller
 public class mainController {
 
+    @Resource
     private RootRepository rootRepository;
-    @Autowired // Spring推薦做法
-    public mainController(RootRepository _userRepository)
-    {
-        rootRepository = _userRepository;
-    }
+//    @Autowired // Spring推薦做法
+//    public mainController(RootRepository _userRepository)
+//    {
+//        rootRepository = _userRepository;
+//    }
+
 
     @RequestMapping("/hello")   //建立URI，也可以放在class前面
     public @ResponseBody String Hello(@RequestParam(value="name", defaultValue="World") String name) {
