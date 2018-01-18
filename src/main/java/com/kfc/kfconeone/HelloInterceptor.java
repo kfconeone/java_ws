@@ -14,9 +14,7 @@ public class HelloInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         System.out.println("[攔截器事件] Controller處理之前");
         System.out.println(request.getRemoteAddr());
-        response.getWriter().write("403 Forbidden");
-        response.setStatus(403);
-        return false;
+        return true;
     }
 
     @Override

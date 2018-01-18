@@ -472,4 +472,32 @@ public class mainController {
         res.put("message","success");
         return res;
     }
+
+
+    //檢查session是否還存活，如果已經死亡則刪除
+    @RequestMapping(path = "/CleanSessionMap" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
+    public @ResponseBody
+    Map CleanSessionMap() {
+
+        Map<String,Object> res = new HashMap<>();
+        ArrayList<String> removeList = new ArrayList<>();
+
+        for (String sessionName : SocketHandler.sessionMap.keySet())
+        {
+            if(!SocketHandler.sessionMap.get(sessionName).isOpen())
+            {
+                removeList.add(sessionName);
+            }
+        }
+
+        for (String sessionName : removeList)
+        {
+            SocketHandler.sessionMap.remove(sessionName);
+        }
+
+
+        res.put("result","000");
+        res.put("message","success");
+        return res;
+    }
 }

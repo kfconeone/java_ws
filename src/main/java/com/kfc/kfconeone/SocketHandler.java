@@ -36,23 +36,6 @@ public class SocketHandler extends TextWebSocketHandler {
         sessionMap.put(uuid,session);
         System.out.println(uuid);
 
-        ArrayList<String> removeList = new ArrayList<>();
-        if(sessionMap.size() > 300)
-        {
-            for (String sessionName : sessionMap.keySet())
-            {
-                if(!sessionMap.get(sessionName).isOpen())
-                {
-                    removeList.add(sessionName);
-                }
-            }
-
-            for (String sessionName : removeList)
-            {
-                sessionMap.remove(sessionName);
-            }
-        }
-
         Map<String,Object> res = new HashMap<>();
 //        Resource resource = new ClassPathResource("/zone.properties");
 //        Properties props = PropertiesLoaderUtils.loadProperties(resource);
