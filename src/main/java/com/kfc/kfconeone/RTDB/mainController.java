@@ -494,8 +494,6 @@ public class mainController {
         {
             SocketHandler.sessionMap.remove(sessionName);
         }
-
-
         res.put("result","000");
         res.put("message","success");
         return res;

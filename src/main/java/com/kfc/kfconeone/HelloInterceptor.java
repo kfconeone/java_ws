@@ -12,18 +12,18 @@ import javax.servlet.http.HttpServletResponse;
 public class HelloInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("[攔截器事件] Controller處理之前");
+        System.out.println("[Interceptor Event] Before Controller");
         System.out.println(request.getRemoteAddr());
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        System.out.println("[攔截器事件] Controller調用之後，視圖渲染之前");
+        System.out.println("[Interceptor Event] After Controller,before Viewer");
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        System.out.println("[攔截器事件] 一切完成之後");
+        System.out.println("[Interceptor Event] All Completed");
     }
 }
