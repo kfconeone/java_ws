@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.springframework.data:spring-data-mongodb:2.0.3.BUILD-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-mongodb/2.0.3.BUILD-SNAPSHOT/spring-data-mongodb-2.0.3.BUILD-20180123.032539-69.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-mongodb/2.0.3.BUILD-SNAPSHOT/spring-data-mongodb-2.0.3.BUILD-20180123.032539-69-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-mongodb/2.0.3.BUILD-SNAPSHOT/spring-data-mongodb-2.0.3.BUILD-20180123.032539-69-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
