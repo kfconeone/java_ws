@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.springframework.boot:spring-boot-starter-data-mongodb:2.0.0.BUILD-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-starter-data-mongodb/2.0.0.BUILD-SNAPSHOT/spring-boot-starter-data-mongodb-2.0.0.BUILD-20180122.230357-404.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-starter-data-mongodb/2.0.0.BUILD-SNAPSHOT/spring-boot-starter-data-mongodb-2.0.0.BUILD-20180123.163833-408.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-starter-data-mongodb/2.0.0.BUILD-SNAPSHOT/spring-boot-starter-data-mongodb-2.0.0.BUILD-20180122.230357-404-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-starter-data-mongodb/2.0.0.BUILD-SNAPSHOT/spring-boot-starter-data-mongodb-2.0.0.BUILD-20180123.163833-408-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-starter-data-mongodb/2.0.0.BUILD-SNAPSHOT/spring-boot-starter-data-mongodb-2.0.0.BUILD-20180122.230357-404-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-starter-data-mongodb/2.0.0.BUILD-SNAPSHOT/spring-boot-starter-data-mongodb-2.0.0.BUILD-20180123.163833-408-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
