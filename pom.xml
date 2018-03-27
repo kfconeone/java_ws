@@ -45,6 +45,12 @@
           <groupId>com.google.code.gson</groupId>
           <artifactId>gson</artifactId>
       </dependency>
+      <dependency>
+          <groupId>com.google.cloud</groupId>
+          <artifactId>google-cloud-translate</artifactId>
+          <version>1.14.0</version>
+      </dependency>
+
   </dependencies>
 
     <build>

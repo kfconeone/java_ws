@@ -1,5 +1,6 @@
 package com.kfc.kfconeone.RTDB;
 
+import com.google.cloud.translate.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.kfc.kfconeone.SocketHandler;
@@ -26,13 +27,25 @@ public class mainController {
 //    {
 //        rootRepository = _userRepository;
 //    }
-
+Translate translate = TranslateOptions.getDefaultInstance().getService();
 
     @RequestMapping("/hello")   //建立URI，也可以放在class前面
     public @ResponseBody String Hello(@RequestParam(value="name", defaultValue="World") String name) {
         //ResponseBody、RequestParam都算是重要的Annotation，告知Spring要如何處置req和res
         //像這個例子就是把字串"Hello"放置在Response的Body回傳
         return "Hello" + name;
+    }
+
+    @RequestMapping("/trans")   //建立URI，也可以放在class前面
+    public @ResponseBody String Translate(@RequestParam(value="text") String text,@RequestParam(value="source") String source,@RequestParam(value="target") String target) {
+
+        Translation translation =
+                translate.translate(
+                        text,
+                        Translate.TranslateOption.sourceLanguage(source),
+                        Translate.TranslateOption.targetLanguage(target));
+
+        return translation.getTranslatedText();
     }
 
 //    以下是CRUD通用接口
