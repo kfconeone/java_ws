@@ -2,6 +2,8 @@ package com.kfc.kfconeone.RTDB;
 
 import org.springframework.data.annotation.Id;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 public class Root {
@@ -17,4 +19,5 @@ public class Root {
     public int pushArrayBound = 200;
     public int pushTableDetailLength = 10;
     public int subscribedSessionBound = 100;
+    public long lastUpdateTime;
 }

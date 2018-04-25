@@ -80,36 +80,8 @@ public class mainController {
         return res;
     }
 
-//    @RequestMapping(path = "/Read{optionalParameter}" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
-//    public @ResponseBody
-//    Map Read(@RequestBody String _req,@PathVariable(name = "optionalParameter") String _optionalParameter) {
-//
-//        Map<String,Object> res = new HashMap<>();
-//        Gson gson = new Gson();
-//        JsonObject req = gson.fromJson(_req,JsonObject.class);
-//
-//        String tableId = req.get("tableId").getAsString();
-//        Root mObject = rootRepository.findByTableId(tableId);
-//        if(mObject == null)
-//        {
-//            res.put("result","001");
-//            res.put("message","table not exists");
-//            return res;
-//        }
-//
-//        res.put("result","000");
-//        res.put("detail",mObject.detail);
-//        if(_optionalParameter.equals("Superior"))
-//        {
-//            res.put("privateDetail",mObject.privateDetail);
-//            res.put("isQueueTable",mObject.isQueueTable);
-//            res.put("pushTableDetailLength",mObject.pushTableDetailLength);
-//            res.put("pushArrayBound",mObject.pushArrayBound);
-//        }
-//        return res;
-//    }
 
-
+    //非Queue Table才可以Update，不然要用Push
     @RequestMapping(path = "/Update{optionalParameter}" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
     public @ResponseBody
     Map Update(@RequestBody String _req,@PathVariable(name = "optionalParameter") String _optionalParameter) throws InterruptedException, IOException {
@@ -143,27 +115,30 @@ public class mainController {
             }
         }
 
+        mObject.lastUpdateTime = ZonedDateTime.now(ZoneOffset.UTC).plusHours(8).toInstant().toEpochMilli();
+
         ArrayList<String> removeList = new ArrayList<>();
-        for (String sessionName :mObject.sessionIds)
+        for (String sessionId :mObject.sessionIds)
         {
-            if(SocketHandler.sessionMap.containsKey(sessionName))
+            if(SocketHandler.sessionMap.containsKey(sessionId))
             {
-                WebSocketSession session = SocketHandler.sessionMap.get(sessionName);
+                WebSocketSession session = SocketHandler.sessionMap.get(sessionId);
                 if(session.isOpen())
                 {
                     Map<String,Object> msg = new HashMap<>();
                     msg.put("tableId",req.get("tableId"));
+                    msg.put("lastUpdateTime",mObject.lastUpdateTime);
                     msg.put("detail",mObject.detail);
                     session.sendMessage(new TextMessage(new Gson().toJson(msg)));
                 }
                 else
                 {
-                    removeList.add(sessionName);
+                    removeList.add(sessionId);
                 }
             }
             else
             {
-                removeList.add(sessionName);
+                removeList.add(sessionId);
             }
         }
         mObject.sessionIds.removeAll(removeList);
@@ -200,11 +175,11 @@ public class mainController {
         resToPlayer.put("result","100");
         resToPlayer.put("tableId",req.get("tableId"));
         resToPlayer.put("message","table is remove");
-        for (Object sessionName :mObject.sessionIds)
+        for (Object sessionId :mObject.sessionIds)
         {
-            if(SocketHandler.sessionMap.containsKey(sessionName.toString()))
+            if(SocketHandler.sessionMap.containsKey(sessionId.toString()))
             {
-                WebSocketSession session = SocketHandler.sessionMap.get(sessionName.toString());
+                WebSocketSession session = SocketHandler.sessionMap.get(sessionId.toString());
                 if(session.isOpen())
                 {
                     session.sendMessage(new TextMessage(new Gson().toJson(resToPlayer)));
@@ -219,6 +194,7 @@ public class mainController {
         return res;
     }
 
+    //Queue Table才可以Push，不然要用Update
     @SuppressWarnings("unchecked")
     @RequestMapping(path = "/Push" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
     public @ResponseBody
@@ -284,29 +260,33 @@ public class mainController {
             mObject.pushArray = tempPushArray;
         }
 
+        //紀錄最後更新時間
+        mObject.lastUpdateTime = ZonedDateTime.now(ZoneOffset.UTC).plusHours(8).toInstant().toEpochMilli();
+
         //step 5 : 將訊息回傳給所有註冊桌子的使用者，如果session不存在，
         //則加到removeList中，迴圈後刪除
         ArrayList<String> removeList = new ArrayList<>();
-        for (String sessionName : mObject.sessionIds)
+        for (String sessionId : mObject.sessionIds)
         {
-            if(SocketHandler.sessionMap.containsKey(sessionName))
+            if(SocketHandler.sessionMap.containsKey(sessionId))
             {
-                WebSocketSession session = SocketHandler.sessionMap.get(sessionName);
+                WebSocketSession session = SocketHandler.sessionMap.get(sessionId);
                 if(session.isOpen())
                 {
                     Map<String,Object> msg = new HashMap<>();
                     msg.put("tableId",req.get("tableId"));
+                    msg.put("lastUpdateTime",mObject.lastUpdateTime);
                     msg.put("pushObject",pushObject);
                     session.sendMessage(new TextMessage(new Gson().toJson(msg)));
                 }
                 else
                 {
-                    removeList.add(sessionName);
+                    removeList.add(sessionId);
                 }
             }
             else
             {
-                removeList.add(sessionName);
+                removeList.add(sessionId);
             }
         }
 
@@ -376,9 +356,26 @@ public class mainController {
         res.put("message","success");
         return res;
     }
+    //=================部分特定功能==================
+    //檢查桌子是否存在
+    @RequestMapping(path = "/CheckTableExist" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
+    public @ResponseBody
+    Map CheckTableExist(@RequestBody String _req) {
 
+        Map<String,Object> res = new HashMap<>();
+        Gson gson = new Gson();
+        JsonObject req = gson.fromJson(_req,JsonObject.class);
 
-//    以下是Client端要使用的接口
+        String tableId = req.get("tableId").getAsString();
+        Root mObject = rootRepository.findByTableId(tableId);
+        if(mObject == null)
+
+        res.put("result","000");
+        res.put("isExist",(mObject != null));
+        return res;
+    }
+
+//==================以下是Client端要使用的接口================
     @RequestMapping(path = "/Subscribe" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
     public @ResponseBody
     Map Subscribe(@RequestBody String _req) {
@@ -482,17 +479,17 @@ public class mainController {
         Map<String,Object> res = new HashMap<>();
         ArrayList<String> removeList = new ArrayList<>();
 
-        for (String sessionName : SocketHandler.sessionMap.keySet())
+        for (String sessionId : SocketHandler.sessionMap.keySet())
         {
-            if(!SocketHandler.sessionMap.get(sessionName).isOpen())
+            if(!SocketHandler.sessionMap.get(sessionId).isOpen())
             {
-                removeList.add(sessionName);
+                removeList.add(sessionId);
             }
         }
 
-        for (String sessionName : removeList)
+        for (String sessionId : removeList)
         {
-            SocketHandler.sessionMap.remove(sessionName);
+            SocketHandler.sessionMap.remove(sessionId);
         }
         res.put("result","000");
         res.put("message","success");

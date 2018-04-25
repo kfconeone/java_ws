@@ -82,5 +82,4 @@
             <url>http://repo.spring.io/snapshot</url>
         </pluginRepository>
     </pluginRepositories>
-
 </project>

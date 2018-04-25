@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +84,7 @@ public class TableTemplateController {
         newRoot.tableId = tableId;
         newRoot.isQueueTable = isQueueTable;
         newRoot.subscribedSessionBound = subscribedSessionBound;
+        newRoot.lastUpdateTime = ZonedDateTime.now(ZoneOffset.UTC).plusHours(8).toInstant().toEpochMilli();
         if(isQueueTable)
         {
             newRoot.pushArrayBound = pushArrayBound;
@@ -132,6 +135,7 @@ public class TableTemplateController {
         }
 
         res.put("result","000");
+        res.put("lastUpdateTime",mObject.lastUpdateTime);
         res.put("detail",mObject.detail);
         if(_optionalParameter.equals("Superior"))
         {
