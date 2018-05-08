@@ -3,6 +3,7 @@ package com.kfc.kfconeone.RTDB;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.kfc.kfconeone.SocketHandler;
+import com.kfc.kfconeone.chatRoom.DiamondSlotsParameters;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -427,6 +428,8 @@ public class mainController {
             mObject.sessionIds.removeAll(removeList);
         }
 
+        //========這裡開始將Account和sessionId做連結=======
+
         rootRepository.save(mObject);
 
         res.put("result","000");
@@ -491,6 +494,26 @@ public class mainController {
         {
             SocketHandler.sessionMap.remove(sessionId);
         }
+        res.put("result","000");
+        res.put("message","success");
+        return res;
+    }
+
+
+    //=======將Account和SessionId做連結
+    @RequestMapping(path = "/SetAccountToSessionId" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
+    public @ResponseBody
+    Map SetAccountToSessionId(@RequestBody String _req) {
+
+        Map<String,Object> res = new HashMap<>();
+        Gson gson = new Gson();
+        JsonObject req = gson.fromJson(_req,JsonObject.class);
+
+        String account = req.get("account").getAsString();
+        String sessionId = req.get("sessionId").getAsString();
+
+        DiamondSlotsParameters.accountToSessionIdMap.put(account,sessionId);
+
         res.put("result","000");
         res.put("message","success");
         return res;
