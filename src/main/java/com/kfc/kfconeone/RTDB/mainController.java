@@ -20,14 +20,18 @@ import java.util.*;
 @RestController     //必加Annotation，告知Spring這個Class是Controller
 public class mainController {
 
+    // ================說明===============
+// 這裡主要是處理WebSocket直接通知使用者訊息的一些接口，
+// 此處說明Server-Client端的互動模式：
+// 1.使用者進行WS連線。
+// 2.連線成功後會訂閱自己的SystemMsg的桌子，此時取得桌子上所有的訊息，
+// 如果桌子不存在就直接創造一個，並且用自己的帳號作為key。
+// 3.每個訊息都有自己的欄位，並且必定包含一個long型態的dateTime。
+// 4.Server有特定訊息要通知則直接寫入欄位，並且更新dateTime。
+//
+
     @Resource
     private RootRepository rootRepository;
-//    @Autowired // Spring推薦做法
-//    public mainController(RootRepository _userRepository)
-//    {
-//        rootRepository = _userRepository;
-//    }
-
 
     @RequestMapping("/hello")   //建立URI，也可以放在class前面
     public @ResponseBody String Hello(@RequestParam(value="name", defaultValue="World") String name) {
@@ -41,7 +45,7 @@ public class mainController {
 //    Push後檢查訊息總數量 - 暫定200，超過後進行備份
 //    Socket連接後檢查sessionMap - 暫定300
 //    後檢查桌中存在連線 - 暫定100
-
+    @Deprecated
     @RequestMapping(path = "/Create" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
     public @ResponseBody
     Map Create(@RequestBody String _req) {
@@ -95,9 +99,7 @@ public class mainController {
         Root mObject = rootRepository.findByTableId(tableId);
         if(mObject == null)
         {
-            res.put("result","001");
-            res.put("message","table not exists");
-            return res;
+            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(tableId,false,100,10,10);
         }
 
         if(mObject.isQueueTable)
@@ -210,9 +212,7 @@ public class mainController {
         Root mObject = rootRepository.findByTableId(tableId);
         if(mObject == null)
         {
-            res.put("result","001");
-            res.put("message","table not exists");
-            return res;
+            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(tableId,true,100,15,200);
         }
 
         if(!mObject.isQueueTable)

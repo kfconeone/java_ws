@@ -75,27 +75,16 @@ public class TableTemplateController {
                             ) throws IOException
     {
         Map<String,Object> res = new HashMap<>();
-        Gson gson = new Gson();
 
-
-        Root newRoot = new Root();
-
-        //直接new Object()會出錯
-        newRoot.detail = gson.fromJson("{}",Object.class);
-        newRoot.privateDetail = gson.fromJson("{}",Object.class);
-        newRoot.pushArray = new ArrayList<>();
-        newRoot.tableId = tableId;
-        newRoot.isQueueTable = isQueueTable;
-        newRoot.subscribedSessionBound = subscribedSessionBound;
-        newRoot.lastUpdateTime = ZonedDateTime.now(ZoneOffset.UTC).plusHours(8).toInstant().toEpochMilli();
-        if(isQueueTable)
+        if(rootRepository.findByTableId(tableId) != null)
         {
-            newRoot.pushArrayBound = pushArrayBound;
-            newRoot.pushTableDetailLength = pushTableDetailLength;
+            res.put("result","001");
+            res.put("message","table exists");
+            return res;
         }
 
+        Root newRoot = new RootTableCreator().CreateNewTable(tableId,isQueueTable,subscribedSessionBound,pushTableDetailLength,pushArrayBound);
         rootRepository.save(newRoot);
-
 
         res.put("result","000");
         res.put("message","success");
@@ -166,9 +155,7 @@ public class TableTemplateController {
         Root mObject = rootRepository.findByTableId(tableId);
         if(mObject == null)
         {
-            res.put("result","001");
-            res.put("message","table not exists");
-            return res;
+            mObject = new RootTableCreator().CreateNewTable(tableId,false,100,10,10);
         }
 
         if(mObject.isQueueTable)
@@ -186,6 +173,7 @@ public class TableTemplateController {
                 detail = gson.fromJson(mObject.detail.toString(),HashMap.class);
                 for(String keyName : req.keySet())
                 {
+                    if(keyName.equals("tableId")) continue;
                     detail.put(keyName,gson.fromJson(req.get(keyName).toString(),Object.class));
                 }
                 mObject.detail = detail;
@@ -194,6 +182,7 @@ public class TableTemplateController {
                 detail = gson.fromJson(mObject.privateDetail.toString(),HashMap.class);
                 for(String keyName : req.keySet())
                 {
+                    if(keyName.equals("tableId")) continue;
                     detail.put(keyName,gson.fromJson(req.get(keyName).toString(),Object.class));
                 }
                 mObject.privateDetail = detail;
