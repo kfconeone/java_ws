@@ -275,4 +275,54 @@ public class TableTemplateController {
         res.put("status",status);
         return res;
     }
+
+
+    //實驗性質，看能不能做到路徑直接讀取
+    @RequestMapping(path = "/Read/{tableId}_{optionalParameter}" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
+    public @ResponseBody
+    Object DirectRead(@PathVariable(name = "tableId") String _tableId,@PathVariable(name = "optionalParameter") String _optionalParameter) {
+
+        Map<String,Object> res = new HashMap<>();
+
+        Root mObject = rootRepository.findByTableId(_tableId);
+        if(mObject == null)
+        {
+            res.put("result","001");
+            res.put("message","table not exists");
+            return res;
+        }
+
+        if(_optionalParameter.trim().isEmpty())
+        {
+            return mObject.detail;
+        }
+
+        String[] elements = _optionalParameter.split("\\.");
+        return ReadRecursive(new Gson(),mObject.detail,elements,0);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object ReadRecursive(Gson _gson,Object _detail,String[] _elements,int _depth) {
+        int nextDepth = _depth + 1;
+        Object tempDetail;
+        HashMap<String, Object> detail = _gson.fromJson(_detail.toString(), HashMap.class);
+        if (detail.containsKey(_elements[_depth]))
+        {
+            tempDetail = detail.get(_elements[_depth]);
+        }
+        else
+        {
+            return null;
+        }
+
+        if (nextDepth == _elements.length)
+        {
+            return tempDetail;
+        }
+        else
+        {
+            return ReadRecursive(_gson, tempDetail, _elements, nextDepth);
+        }
+    }
+
 }
