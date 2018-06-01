@@ -8,15 +8,7 @@ import com.kfc.kfconeone.SocketHandler;
 import com.kfc.kfconeone.chatRoom.DiamondSlotsParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 // ================說明===============
 // 這裡主要是處理WebSocket直接通知使用者訊息的一些接口，

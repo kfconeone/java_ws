@@ -394,9 +394,9 @@ public class mainController {
         Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
-            res.put("result","001");
-            res.put("message","table not exists");
-            return res;
+            Boolean isQueueTable = req.get("isQueueTable").getAsBoolean();
+            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(groupId,tableId,isQueueTable,100,15,200);
+
         }
 
 
@@ -408,7 +408,7 @@ public class mainController {
         else
         {
             res.put("result","001");
-            res.put("message","already exist");
+            res.put("message","already subscribed");
             return res;
         }
 
