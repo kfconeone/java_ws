@@ -23,7 +23,7 @@ public class ChatRoomController {
     }
 
 
-
+    @Deprecated
     @RequestMapping(path = "/CreateLobbyChatRoom" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
     public @ResponseBody
     Map CreateLobbyChatRoom() throws IOException
@@ -31,7 +31,7 @@ public class ChatRoomController {
         Map<String,Object> res = new HashMap<>();
         Gson gson = new Gson();
 
-        if(rootRepository.findByTableId("LobbyChatRoom") != null)
+        if(rootRepository.findByTableIdAndGroupId("LobbyChatRoom","ChatRoom") != null)
         {
             res.put("result","001");
             res.put("message","table exists");

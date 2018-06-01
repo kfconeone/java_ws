@@ -45,45 +45,45 @@ public class mainController {
 //    Push後檢查訊息總數量 - 暫定200，超過後進行備份
 //    Socket連接後檢查sessionMap - 暫定300
 //    後檢查桌中存在連線 - 暫定100
-    @Deprecated
-    @RequestMapping(path = "/Create" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
-    public @ResponseBody
-    Map Create(@RequestBody String _req) {
-
-        Map<String,Object> res = new HashMap<>();
-        Gson gson = new Gson();
-        JsonObject req = gson.fromJson(_req,JsonObject.class);
-        String tableId = req.get("tableId").getAsString();
-        if(rootRepository.findByTableId(tableId) != null)
-        {
-            res.put("result","001");
-            res.put("message","table exists");
-            return res;
-        }
-
-        Root newRoot = new Root();
-
-        //注意，不用括號的字串轉成object，mongo有bug存不進去
-        if(req.has("detail")) newRoot.detail = gson.fromJson(req.get("detail").toString(),Object.class);
-        else newRoot.detail = gson.fromJson("{}",Object.class);
-
-        newRoot.pushArray = new ArrayList<>();
-        newRoot.tableId = req.get("tableId").getAsString();
-        //建立一個private的detail，面向伺服器端，使用者端不可見
-        if(req.has("privateDetail")) newRoot.detail = gson.fromJson(req.get("privateDetail").toString(),Object.class);
-        else newRoot.detail = gson.fromJson("{}",Object.class);
-
-        //檢查有沒有決定Table是否Queue型態
-        if(req.has("isQueueTable")) newRoot.isQueueTable = req.get("isQueueTable").getAsBoolean();
-        if(req.has("subscribedSessionBound")) newRoot.subscribedSessionBound = req.get("subscribedSessionBound").getAsInt();
-
-        rootRepository.save(newRoot);
-
-
-        res.put("result","000");
-        res.put("message","success");
-        return res;
-    }
+//    @Deprecated
+//    @RequestMapping(path = "/Create" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
+//    public @ResponseBody
+//    Map Create(@RequestBody String _req) {
+//
+//        Map<String,Object> res = new HashMap<>();
+//        Gson gson = new Gson();
+//        JsonObject req = gson.fromJson(_req,JsonObject.class);
+//        String tableId = req.get("tableId").getAsString();
+//        if(rootRepository.findByTableId(tableId) != null)
+//        {
+//            res.put("result","001");
+//            res.put("message","table exists");
+//            return res;
+//        }
+//
+//        Root newRoot = new Root();
+//
+//        //注意，不用括號的字串轉成object，mongo有bug存不進去
+//        if(req.has("detail")) newRoot.detail = gson.fromJson(req.get("detail").toString(),Object.class);
+//        else newRoot.detail = gson.fromJson("{}",Object.class);
+//
+//        newRoot.pushArray = new ArrayList<>();
+//        newRoot.tableId = req.get("tableId").getAsString();
+//        //建立一個private的detail，面向伺服器端，使用者端不可見
+//        if(req.has("privateDetail")) newRoot.detail = gson.fromJson(req.get("privateDetail").toString(),Object.class);
+//        else newRoot.detail = gson.fromJson("{}",Object.class);
+//
+//        //檢查有沒有決定Table是否Queue型態
+//        if(req.has("isQueueTable")) newRoot.isQueueTable = req.get("isQueueTable").getAsBoolean();
+//        if(req.has("subscribedSessionBound")) newRoot.subscribedSessionBound = req.get("subscribedSessionBound").getAsInt();
+//
+//        rootRepository.save(newRoot);
+//
+//
+//        res.put("result","000");
+//        res.put("message","success");
+//        return res;
+//    }
 
 
     //非Queue Table才可以Update，不然要用Push
@@ -96,10 +96,11 @@ public class mainController {
         JsonObject req = gson.fromJson(_req,JsonObject.class);
 
         String tableId = req.get("tableId").getAsString();
-        Root mObject = rootRepository.findByTableId(tableId);
+        String groupId = req.get("groupId").getAsString();
+        Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
-            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(tableId,false,100,10,10);
+            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(groupId,tableId,false,100,10,10);
         }
 
         if(mObject.isQueueTable)
@@ -166,7 +167,8 @@ public class mainController {
         JsonObject req = gson.fromJson(_req,JsonObject.class);
 
         String tableId = req.get("tableId").getAsString();
-        Root mObject = rootRepository.findByTableId(tableId);
+        String groupId = req.get("groupId").getAsString();
+        Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
             res.put("result","001");
@@ -209,10 +211,11 @@ public class mainController {
 
         //step 2 :檢查有沒有這張桌子並檢查是不是可以push的QueueTable，沒有就直接回傳訊息
         String tableId = req.get("tableId").getAsString();
-        Root mObject = rootRepository.findByTableId(tableId);
+        String groupId = req.get("groupId").getAsString();
+        Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
-            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(tableId,true,100,15,200);
+            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(groupId,tableId,true,100,15,200);
         }
 
         if(!mObject.isQueueTable)
@@ -337,7 +340,8 @@ public class mainController {
         JsonObject req = gson.fromJson(_req,JsonObject.class);
 
         String tableId = req.get("tableId").getAsString();
-        Root mObject = rootRepository.findByTableId(tableId);
+        String groupId = req.get("groupId").getAsString();
+        Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
             res.put("result","001");
@@ -368,7 +372,8 @@ public class mainController {
         JsonObject req = gson.fromJson(_req,JsonObject.class);
 
         String tableId = req.get("tableId").getAsString();
-        Root mObject = rootRepository.findByTableId(tableId);
+        String groupId = req.get("groupId").getAsString();
+        Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
 
         res.put("result","000");
@@ -385,7 +390,8 @@ public class mainController {
         JsonObject req = gson.fromJson(_req,JsonObject.class);
 
         String tableId = req.get("tableId").getAsString();
-        Root mObject = rootRepository.findByTableId(tableId);
+        String groupId = req.get("groupId").getAsString();
+        Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
             res.put("result","001");
@@ -447,7 +453,8 @@ public class mainController {
         JsonObject req = gson.fromJson(_req,JsonObject.class);
 
         String tableId = req.get("tableId").getAsString();
-        Root mObject = rootRepository.findByTableId(tableId);
+        String groupId = req.get("groupId").getAsString();
+        Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
             res.put("result","001");

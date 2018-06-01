@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RootTableCreator {
-    public Root CreateNewTable(String _tableId,boolean _isQueue,int _subscribedSessionBound,int _pushTableDetailLength,int _pushArrayBound)
+    public Root CreateNewTable(String _groupId,String _tableId,boolean _isQueue,int _subscribedSessionBound,int _pushTableDetailLength,int _pushArrayBound)
     {
         Root newRoot = new Root();
 
@@ -16,6 +16,7 @@ public class RootTableCreator {
         newRoot.detail = new HashMap<String,Object>();
         newRoot.privateDetail = new HashMap<String,Object>();
         newRoot.pushArray = new ArrayList<>();
+        newRoot.groupId = _groupId;
         newRoot.tableId = _tableId;
         newRoot.isQueueTable = _isQueue;
         newRoot.subscribedSessionBound = _subscribedSessionBound;

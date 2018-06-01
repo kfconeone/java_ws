@@ -51,11 +51,11 @@ public class TableTemplateController {
         }
 
         ArrayList<String> ApiExamples = new ArrayList<>();
-        ApiExamples.add("http://localhost:8081/CreateTemplateTable?tableId=[TABLE_ID]&isQueueTable=true&pushArrayBound=100&pushTableDetailLength=15&subscribedSessionBound=120");
-        ApiExamples.add("http://localhost:8081/DeleteTable?tableId=[TABLE_ID]");
-        ApiExamples.add("http://localhost:8081/ReadTable?tableId=[TABLE_ID]");
-        ApiExamples.add("http://localhost:8081/ReadTableSuperior?tableId=[TABLE_ID]");
-        ApiExamples.add("http://localhost:8081/GetSessionAliveStatus?tableId=[TABLE_ID]");
+        ApiExamples.add("http://localhost:8081/CreateTemplateTable?groupId=[GROUP_ID]&tableId=[TABLE_ID]&isQueueTable=true&pushArrayBound=100&pushTableDetailLength=15&subscribedSessionBound=120");
+        ApiExamples.add("http://localhost:8081/DeleteTable?groupId=[GROUP_ID]&tableId=[TABLE_ID]");
+        ApiExamples.add("http://localhost:8081/ReadTable?groupId=[GROUP_ID]&tableId=[TABLE_ID]");
+        ApiExamples.add("http://localhost:8081/ReadTableSuperior?groupId=[GROUP_ID]&tableId=[TABLE_ID]");
+        ApiExamples.add("http://localhost:8081/GetSessionAliveStatus?groupId=[GROUP_ID]&tableId=[TABLE_ID]");
 
         res.put("result","000");
         res.put("message","success");
@@ -67,7 +67,8 @@ public class TableTemplateController {
     //http://localhost:8081/CreateTemplateTable?tableId=testing&isQueueTable=true&pushArrayBound=100&pushTableDetailLength=15&subscribedSessionBound=120
     @RequestMapping(path = "/CreateTemplateTable" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
     public @ResponseBody
-    Map CreateTemplateTable(@RequestParam(value="tableId") String tableId,
+    Map CreateTemplateTable(@RequestParam(value="groupId") String groupId,
+                            @RequestParam(value="tableId") String tableId,
                             @RequestParam(value="isQueueTable") boolean isQueueTable,
                             @RequestParam(value="pushArrayBound") int pushArrayBound,
                             @RequestParam(value="pushTableDetailLength") int pushTableDetailLength,
@@ -76,14 +77,14 @@ public class TableTemplateController {
     {
         Map<String,Object> res = new HashMap<>();
 
-        if(rootRepository.findByTableId(tableId) != null)
+        if(rootRepository.findByTableIdAndGroupId(tableId,groupId) != null)
         {
             res.put("result","001");
             res.put("message","table exists");
             return res;
         }
 
-        Root newRoot = new RootTableCreator().CreateNewTable(tableId,isQueueTable,subscribedSessionBound,pushTableDetailLength,pushArrayBound);
+        Root newRoot = new RootTableCreator().CreateNewTable(groupId,tableId,isQueueTable,subscribedSessionBound,pushTableDetailLength,pushArrayBound);
         rootRepository.save(newRoot);
 
         res.put("result","000");
@@ -93,11 +94,12 @@ public class TableTemplateController {
 
     @RequestMapping(path = "/DeleteTable" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
     public @ResponseBody
-    Map Delete(@RequestParam(value="tableId") String tableId) throws InterruptedException, IOException {
+    Map Delete(@RequestParam(value="groupId") String groupId,
+                @RequestParam(value="tableId") String tableId) throws InterruptedException, IOException {
 
         Map<String,Object> res = new HashMap<>();
 
-        Root mObject = rootRepository.findByTableId(tableId);
+        Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
             res.put("result","001");
@@ -114,11 +116,11 @@ public class TableTemplateController {
 
     @RequestMapping(path = "/ReadTable{optionalParameter}" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
     public @ResponseBody
-    Map Read(@PathVariable(name = "optionalParameter") String _optionalParameter,@RequestParam(value="tableId") String _tableId) {
+    Map Read(@PathVariable(name = "optionalParameter") String _optionalParameter,@RequestParam(value="groupId") String _groupId,@RequestParam(value="tableId") String _tableId) {
 
         Map<String,Object> res = new HashMap<>();
 
-        Root mObject = rootRepository.findByTableId(_tableId);
+        Root mObject = rootRepository.findByTableIdAndGroupId(_tableId,_groupId);
         if(mObject == null)
         {
             res.put("result","001");
@@ -152,10 +154,11 @@ public class TableTemplateController {
         JsonObject req = gson.fromJson(_req,JsonObject.class);
 
         String tableId = req.get("tableId").getAsString();
-        Root mObject = rootRepository.findByTableId(tableId);
+        String groupId = req.get("groupId").getAsString();
+        Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
-            mObject = new RootTableCreator().CreateNewTable(tableId,false,100,10,10);
+            mObject = new RootTableCreator().CreateNewTable(groupId,tableId,false,100,10,10);
         }
 
         if(mObject.isQueueTable)
@@ -231,14 +234,17 @@ public class TableTemplateController {
         return res;
     }
 
+
+    //===============以上為基礎的CRUD功能，以下則為可斟酌使用的API==========
     //檢查session是否還存活，如果已經死亡則刪除
     @RequestMapping(path = "/GetSessionAliveStatus" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
     public @ResponseBody
-    Map GetConnectionStatus(@RequestParam(value="tableId") String _tableId) {
+    Map GetConnectionStatus(@RequestParam(value="groupId") String _groupId,
+                            @RequestParam(value="tableId") String _tableId) {
 
         Map<String,Object> res = new HashMap<>();
 
-        Root mObject = rootRepository.findByTableId(_tableId);
+        Root mObject = rootRepository.findByTableIdAndGroupId(_tableId,_groupId);
         if(mObject == null)
         {
             res.put("result","001");
@@ -277,52 +283,52 @@ public class TableTemplateController {
     }
 
 
-    //實驗性質，看能不能做到路徑直接讀取
-    @RequestMapping(path = "/Read/{tableId}_{optionalParameter}" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
-    public @ResponseBody
-    Object DirectRead(@PathVariable(name = "tableId") String _tableId,@PathVariable(name = "optionalParameter") String _optionalParameter) {
-
-        Map<String,Object> res = new HashMap<>();
-
-        Root mObject = rootRepository.findByTableId(_tableId);
-        if(mObject == null)
-        {
-            res.put("result","001");
-            res.put("message","table not exists");
-            return res;
-        }
-
-        if(_optionalParameter.trim().isEmpty())
-        {
-            return mObject.detail;
-        }
-
-        String[] elements = _optionalParameter.split("\\.");
-        return ReadRecursive(new Gson(),mObject.detail,elements,0);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object ReadRecursive(Gson _gson,Object _detail,String[] _elements,int _depth) {
-        int nextDepth = _depth + 1;
-        Object tempDetail;
-        HashMap<String, Object> detail = _gson.fromJson(_detail.toString(), HashMap.class);
-        if (detail.containsKey(_elements[_depth]))
-        {
-            tempDetail = detail.get(_elements[_depth]);
-        }
-        else
-        {
-            return null;
-        }
-
-        if (nextDepth == _elements.length)
-        {
-            return tempDetail;
-        }
-        else
-        {
-            return ReadRecursive(_gson, tempDetail, _elements, nextDepth);
-        }
-    }
+//    //實驗性質，看能不能做到路徑直接讀取
+//    @RequestMapping(path = "/Read/{tableId}_{optionalParameter}" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
+//    public @ResponseBody
+//    Object DirectRead(@PathVariable(name = "tableId") String _tableId,@PathVariable(name = "optionalParameter") String _optionalParameter) {
+//
+//        Map<String,Object> res = new HashMap<>();
+//
+//        Root mObject = rootRepository.findByTableId(_tableId);
+//        if(mObject == null)
+//        {
+//            res.put("result","001");
+//            res.put("message","table not exists");
+//            return res;
+//        }
+//
+//        if(_optionalParameter.trim().isEmpty())
+//        {
+//            return mObject.detail;
+//        }
+//
+//        String[] elements = _optionalParameter.split("\\.");
+//        return ReadRecursive(new Gson(),mObject.detail,elements,0);
+//    }
+//
+//    @SuppressWarnings("unchecked")
+//    private Object ReadRecursive(Gson _gson,Object _detail,String[] _elements,int _depth) {
+//        int nextDepth = _depth + 1;
+//        Object tempDetail;
+//        HashMap<String, Object> detail = _gson.fromJson(_detail.toString(), HashMap.class);
+//        if (detail.containsKey(_elements[_depth]))
+//        {
+//            tempDetail = detail.get(_elements[_depth]);
+//        }
+//        else
+//        {
+//            return null;
+//        }
+//
+//        if (nextDepth == _elements.length)
+//        {
+//            return tempDetail;
+//        }
+//        else
+//        {
+//            return ReadRecursive(_gson, tempDetail, _elements, nextDepth);
+//        }
+//    }
 
 }
