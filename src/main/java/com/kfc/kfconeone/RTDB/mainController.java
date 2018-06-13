@@ -130,6 +130,7 @@ public class mainController {
                 if(session.isOpen())
                 {
                     Map<String,Object> msg = new HashMap<>();
+                    msg.put("groupId",groupId);
                     msg.put("tableId",req.get("tableId"));
                     msg.put("lastUpdateTime",mObject.lastUpdateTime);
                     msg.put("detail",mObject.detail);
@@ -278,7 +279,8 @@ public class mainController {
                 if(session.isOpen())
                 {
                     Map<String,Object> msg = new HashMap<>();
-                    msg.put("tableId",req.get("tableId"));
+                    msg.put("groupId",groupId);
+                    msg.put("tableId",tableId);
                     msg.put("lastUpdateTime",mObject.lastUpdateTime);
                     msg.put("pushObject",pushObject);
                     session.sendMessage(new TextMessage(new Gson().toJson(msg)));
@@ -408,6 +410,8 @@ public class mainController {
         else
         {
             res.put("result","001");
+            res.put("groupId",groupId);
+            res.put("tableId",tableId);
             res.put("message","already subscribed");
             return res;
         }
@@ -440,7 +444,10 @@ public class mainController {
 
         res.put("result","000");
         res.put("message","success");
+        res.put("groupId",groupId);
+        res.put("tableId",tableId);
         res.put("detail",mObject.detail);
+        res.put("lastUpdateTime",mObject.lastUpdateTime);
         return res;
     }
 
@@ -458,6 +465,8 @@ public class mainController {
         if(mObject == null)
         {
             res.put("result","001");
+            res.put("groupId",groupId);
+            res.put("tableId",tableId);
             res.put("message","table not exists");
             return res;
         }
@@ -469,6 +478,8 @@ public class mainController {
         else
         {
             res.put("result","001");
+            res.put("groupId",groupId);
+            res.put("tableId",tableId);
             res.put("message","not subscribe");
             return res;
         }
@@ -476,6 +487,8 @@ public class mainController {
 
 
         res.put("result","000");
+        res.put("groupId",groupId);
+        res.put("tableId",tableId);
         res.put("message","success");
         return res;
     }

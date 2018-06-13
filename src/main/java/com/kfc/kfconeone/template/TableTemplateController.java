@@ -176,7 +176,7 @@ public class TableTemplateController {
                 detail = gson.fromJson(mObject.detail.toString(),HashMap.class);
                 for(String keyName : req.keySet())
                 {
-                    if(keyName.equals("tableId")) continue;
+                    if(keyName.equals("tableId") || keyName.equals("groupId")) continue;
                     detail.put(keyName,gson.fromJson(req.get(keyName).toString(),Object.class));
                 }
                 mObject.detail = detail;
@@ -185,7 +185,7 @@ public class TableTemplateController {
                 detail = gson.fromJson(mObject.privateDetail.toString(),HashMap.class);
                 for(String keyName : req.keySet())
                 {
-                    if(keyName.equals("tableId")) continue;
+                    if(keyName.equals("tableId") || keyName.equals("groupId")) continue;
                     detail.put(keyName,gson.fromJson(req.get(keyName).toString(),Object.class));
                 }
                 mObject.privateDetail = detail;
