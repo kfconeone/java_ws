@@ -209,7 +209,9 @@ public class TableTemplateController {
                 if(session.isOpen())
                 {
                     Map<String,Object> msg = new HashMap<>();
-                    msg.put("tableId",req.get("tableId"));
+                    msg.put("messageType","PATCH_MESSAGE");
+                    msg.put("groupId",groupId);
+                    msg.put("tableId",tableId);
                     msg.put("detail",mObject.detail);
                     msg.put("lastUpdateTime",mObject.lastUpdateTime);
                     session.sendMessage(new TextMessage(new Gson().toJson(msg)));

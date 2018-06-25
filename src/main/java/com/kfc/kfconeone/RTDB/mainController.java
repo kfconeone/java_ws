@@ -130,6 +130,7 @@ public class mainController {
                 if(session.isOpen())
                 {
                     Map<String,Object> msg = new HashMap<>();
+                    msg.put("messageType","UPDATE_MESSAGE");
                     msg.put("groupId",groupId);
                     msg.put("tableId",req.get("tableId"));
                     msg.put("lastUpdateTime",mObject.lastUpdateTime);
@@ -179,7 +180,9 @@ public class mainController {
 
         Map<String,Object> resToPlayer = new HashMap<>();
         resToPlayer.put("result","100");
-        resToPlayer.put("tableId",req.get("tableId"));
+        resToPlayer.put("messageType","UPDATE_MESSAGE");
+        resToPlayer.put("tableId",tableId);
+        resToPlayer.put("tableId",groupId);
         resToPlayer.put("message","table is remove");
         for (Object sessionId :mObject.sessionIds)
         {
@@ -279,6 +282,7 @@ public class mainController {
                 if(session.isOpen())
                 {
                     Map<String,Object> msg = new HashMap<>();
+                    msg.put("messageType","PUSH_MESSAGE");
                     msg.put("groupId",groupId);
                     msg.put("tableId",tableId);
                     msg.put("lastUpdateTime",mObject.lastUpdateTime);
