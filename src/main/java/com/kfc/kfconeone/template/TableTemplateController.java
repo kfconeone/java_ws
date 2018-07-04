@@ -170,6 +170,12 @@ public class TableTemplateController {
 
         HashMap<String,Object> detail;
 
+        //如果沒填值自動判斷為Public
+        if(_optionalParameter.trim().isEmpty())
+        {
+            _optionalParameter = "Public";
+        }
+
         switch (_optionalParameter)
         {
             case "Public":
@@ -232,6 +238,8 @@ public class TableTemplateController {
 
 
         res.put("result","000");
+        res.put("detail",mObject.detail);
+        res.put("lastUpdateTime",mObject.lastUpdateTime);
         res.put("message","success");
         return res;
     }

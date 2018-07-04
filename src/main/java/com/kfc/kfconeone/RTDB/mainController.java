@@ -153,6 +153,8 @@ public class mainController {
 
 
         res.put("result","000");
+        res.put("lastUpdateTime",mObject.lastUpdateTime);
+        res.put("detail",mObject.detail);
         res.put("message","success");
         return res;
     }
@@ -212,7 +214,6 @@ public class mainController {
         Map<String,Object> res = new HashMap<>();
         Gson gson = new Gson();
         JsonObject req = gson.fromJson(_req,JsonObject.class);
-
         //step 2 :檢查有沒有這張桌子並檢查是不是可以push的QueueTable，沒有就直接回傳訊息
         String tableId = req.get("tableId").getAsString();
         String groupId = req.get("groupId").getAsString();
@@ -306,6 +307,8 @@ public class mainController {
 
 
         res.put("result","000");
+        res.put("lastUpdateTime",mObject.lastUpdateTime);
+        res.put("pushObject",pushObject);
         res.put("message","success");
         return res;
     }
