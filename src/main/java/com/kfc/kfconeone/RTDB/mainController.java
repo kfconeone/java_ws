@@ -100,7 +100,7 @@ public class mainController {
         Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
-            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(groupId,tableId,false,100,10,10);
+            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(groupId,tableId,false,100,100,200);
         }
 
         if(mObject.isQueueTable)
@@ -220,7 +220,7 @@ public class mainController {
         Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
-            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(groupId,tableId,true,100,15,200);
+            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(groupId,tableId,true,100,100,200);
         }
 
         if(!mObject.isQueueTable)
@@ -404,7 +404,7 @@ public class mainController {
         if(mObject == null)
         {
             Boolean isQueueTable = req.get("isQueueTable").getAsBoolean();
-            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(groupId,tableId,isQueueTable,100,15,200);
+            mObject = new com.kfc.kfconeone.template.RootTableCreator().CreateNewTable(groupId,tableId,isQueueTable,100,100,200);
 
         }
 

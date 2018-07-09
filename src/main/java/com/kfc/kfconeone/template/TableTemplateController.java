@@ -158,7 +158,7 @@ public class TableTemplateController {
         Root mObject = rootRepository.findByTableIdAndGroupId(tableId,groupId);
         if(mObject == null)
         {
-            mObject = new RootTableCreator().CreateNewTable(groupId,tableId,false,100,10,10);
+            mObject = new RootTableCreator().CreateNewTable(groupId,tableId,false,100,100,200);
         }
 
         if(mObject.isQueueTable)
