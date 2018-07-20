@@ -8,9 +8,12 @@ public class Root {
     @Id
     public String id;
 
-    public Object detail;
-    public Object privateDetail;
-    public ArrayList<Object> pushArray;
+//    public Object detail;
+//    public Object privateDetail;
+//    public ArrayList<Object> pushArray;
+    public String detail;
+    public String privateDetail;
+    public String pushArray;
     //加入groupId的原因主要是因為分類
     //例如：
     //A與B進行溝通，此溝通屬於聊天室溝通

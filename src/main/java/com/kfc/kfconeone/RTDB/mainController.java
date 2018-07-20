@@ -110,12 +110,13 @@ public class mainController {
             return res;
         }
 
-        mObject.detail = gson.fromJson(req.get("detail").toString(),Object.class);
+        Object detail = gson.fromJson(req.get("detail").toString(),Object.class);
+        mObject.detail = gson.toJson(detail);
         if(_optionalParameter.equals("Superior"))
         {
             if(req.has("privateDetail"))
             {
-                mObject.privateDetail = gson.fromJson(req.get("privateDetail").toString(),Object.class);
+                mObject.privateDetail = gson.toJson(gson.fromJson(req.get("privateDetail").toString(),Object.class));
             }
         }
 
@@ -134,7 +135,7 @@ public class mainController {
                     msg.put("groupId",groupId);
                     msg.put("tableId",req.get("tableId"));
                     msg.put("lastUpdateTime",mObject.lastUpdateTime);
-                    msg.put("detail",mObject.detail);
+                    msg.put("detail",detail);
                     session.sendMessage(new TextMessage(new Gson().toJson(msg)));
                 }
                 else
@@ -154,7 +155,7 @@ public class mainController {
 
         res.put("result","000");
         res.put("lastUpdateTime",mObject.lastUpdateTime);
-        res.put("detail",mObject.detail);
+        res.put("detail",detail);
         res.put("message","success");
         return res;
     }
@@ -241,11 +242,11 @@ public class mainController {
 
         if(tempPushArray.size() < (mObject.pushTableDetailLength + 1))
         {
-            mObject.detail = tempPushArray;
+            mObject.detail = gson.toJson(tempPushArray);
         }
         else
         {
-            mObject.detail = tempPushArray.subList(tempPushArray.size() - mObject.pushTableDetailLength,tempPushArray.size());
+            mObject.detail = gson.toJson(tempPushArray.subList(tempPushArray.size() - mObject.pushTableDetailLength,tempPushArray.size()));
         }
 
         //step 4 : 超過一定筆數，就紀錄聊天訊息
@@ -261,12 +262,12 @@ public class mainController {
             try (FileWriter writer = new FileWriter(String.format("%s_%s_%s",fileName,tableId,"Backup.txt")))
             {
                 writer.write(new Gson().toJson(tempPushArray));
-                mObject.pushArray = new ArrayList<>(tempPushArray.subList(tempPushArray.size() - mObject.pushTableDetailLength,tempPushArray.size()));
+                mObject.pushArray = gson.toJson(new ArrayList<>(tempPushArray.subList(tempPushArray.size() - mObject.pushTableDetailLength,tempPushArray.size())));
             }
         }
         else
         {
-            mObject.pushArray = tempPushArray;
+            mObject.pushArray = gson.toJson(tempPushArray);
         }
 
         //紀錄最後更新時間
@@ -453,7 +454,7 @@ public class mainController {
         res.put("message","success");
         res.put("groupId",groupId);
         res.put("tableId",tableId);
-        res.put("detail",mObject.detail);
+        res.put("detail",gson.fromJson(mObject.detail,Object.class));
         res.put("lastUpdateTime",mObject.lastUpdateTime);
         return res;
     }

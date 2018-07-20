@@ -1,5 +1,6 @@
 package com.kfc.kfconeone.template;
 
+import com.google.gson.Gson;
 import com.kfc.kfconeone.RTDB.Root;
 
 import java.time.ZoneOffset;
@@ -13,9 +14,10 @@ public class RootTableCreator {
         Root newRoot = new Root();
 
         //直接new Object()會出錯
-        newRoot.detail = new HashMap<String,Object>();
-        newRoot.privateDetail = new HashMap<String,Object>();
-        newRoot.pushArray = new ArrayList<>();
+        Gson gson = new Gson();
+        newRoot.detail = gson.toJson(new HashMap<String,Object>());
+        newRoot.privateDetail = gson.toJson(new HashMap<String,Object>());
+        newRoot.pushArray = gson.toJson(new ArrayList<>());
         newRoot.groupId = _groupId;
         newRoot.tableId = _tableId;
         newRoot.isQueueTable = _isQueue;

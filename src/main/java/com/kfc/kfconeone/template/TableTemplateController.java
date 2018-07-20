@@ -130,7 +130,7 @@ public class TableTemplateController {
 
         res.put("result","000");
         res.put("lastUpdateTime",mObject.lastUpdateTime);
-        res.put("detail",mObject.detail);
+        res.put("detail",new Gson().fromJson(mObject.detail,Object.class));
         if(_optionalParameter.equals("Superior"))
         {
             res.put("privateDetail",mObject.privateDetail);
@@ -179,22 +179,22 @@ public class TableTemplateController {
         switch (_optionalParameter)
         {
             case "Public":
-                detail = gson.fromJson(mObject.detail.toString(),HashMap.class);
+                detail = gson.fromJson(mObject.detail,HashMap.class);
                 for(String keyName : req.keySet())
                 {
                     if(keyName.equals("tableId") || keyName.equals("groupId")) continue;
                     detail.put(keyName,gson.fromJson(req.get(keyName).toString(),Object.class));
                 }
-                mObject.detail = detail;
+                mObject.detail = gson.toJson(detail);
                 break;
             case "Private":
-                detail = gson.fromJson(mObject.privateDetail.toString(),HashMap.class);
+                detail = gson.fromJson(mObject.privateDetail,HashMap.class);
                 for(String keyName : req.keySet())
                 {
                     if(keyName.equals("tableId") || keyName.equals("groupId")) continue;
                     detail.put(keyName,gson.fromJson(req.get(keyName).toString(),Object.class));
                 }
-                mObject.privateDetail = detail;
+                mObject.privateDetail = gson.toJson(detail);
                 break;
             default:
                 res.put("result","003");
@@ -218,7 +218,7 @@ public class TableTemplateController {
                     msg.put("messageType","PATCH_MESSAGE");
                     msg.put("groupId",groupId);
                     msg.put("tableId",tableId);
-                    msg.put("detail",mObject.detail);
+                    msg.put("detail",detail);
                     msg.put("lastUpdateTime",mObject.lastUpdateTime);
                     session.sendMessage(new TextMessage(new Gson().toJson(msg)));
                 }
@@ -238,7 +238,7 @@ public class TableTemplateController {
 
 
         res.put("result","000");
-        res.put("detail",mObject.detail);
+        res.put("detail",detail);
         res.put("lastUpdateTime",mObject.lastUpdateTime);
         res.put("message","success");
         return res;
