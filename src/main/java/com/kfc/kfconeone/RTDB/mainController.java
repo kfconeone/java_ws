@@ -234,7 +234,8 @@ public class mainController {
         //step 3 : 將資料庫中的table取出後，把request中的訊息給加上去
         //pushArray會留存全部訊息，而detail中止會留存最新十條
         ArrayList<Object> tempPushArray;
-        tempPushArray = gson.fromJson(new Gson().toJson(mObject.pushArray),ArrayList.class);
+
+        tempPushArray = gson.fromJson(mObject.pushArray,ArrayList.class);
 
         Object pushObject = gson.fromJson(req.get("pushObject").toString(),Object.class);
         tempPushArray.add(pushObject);
