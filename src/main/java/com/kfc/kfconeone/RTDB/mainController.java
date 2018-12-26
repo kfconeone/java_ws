@@ -504,7 +504,7 @@ public class mainController {
 
 
     //檢查session是否還存活，如果已經死亡則刪除
-    @RequestMapping(path = "/CleanSessionMap" , method = RequestMethod.GET)   //建立URI，也可以放在class前面
+    @RequestMapping(path = "/CheckAliveSessions" , method = RequestMethod.POST)   //建立URI，也可以放在class前面
     public @ResponseBody
     Map CleanSessionMap() {
 
@@ -523,7 +523,9 @@ public class mainController {
         {
             SocketHandler.sessionMap.remove(sessionId);
         }
+
         res.put("result","000");
+        res.put("aliveSessionsCount",SocketHandler.sessionMap.size());
         res.put("message","success");
         return res;
     }
