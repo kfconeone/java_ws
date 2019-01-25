@@ -414,41 +414,64 @@ public class mainController {
         {
             mObject.sessionIds.add(req.get("sessionId").getAsString());
             res.put("sessionId",req.get("sessionId").getAsString());
+            //當桌面上註冊的sessionId超過一定數量，進行檢查把斷線的給刪除
+            if(mObject.sessionIds.size() > mObject.subscribedSessionBound)
+            {
+                ArrayList<String> removeList = new ArrayList<>();
+                for (String sessionId : mObject.sessionIds)
+                {
+                    if(SocketHandler.sessionMap.containsKey(sessionId))
+                    {
+                        if(!SocketHandler.sessionMap.get(sessionId).isOpen())
+                        {
+                            SocketHandler.sessionMap.remove(sessionId);
+                            removeList.add(sessionId);
+                        }
+                    }
+                    else
+                    {
+                        removeList.add(sessionId);
+                    }
+                }
+                mObject.sessionIds.removeAll(removeList);
+            }
+            rootRepository.save(mObject);
         }
         else
         {
+            rootRepository.save(mObject);
             res.put("result","001");
             res.put("groupId",groupId);
             res.put("tableId",tableId);
             res.put("message","already subscribed");
+            res.put("detail",gson.fromJson(mObject.detail,Object.class));
+            res.put("lastUpdateTime",mObject.lastUpdateTime);
             return res;
         }
 
-        //當桌面上註冊的sessionId超過一定數量，進行檢查把斷線的給刪除
-        if(mObject.sessionIds.size() > mObject.subscribedSessionBound)
-        {
-            ArrayList<String> removeList = new ArrayList<>();
-            for (String sessionId : mObject.sessionIds)
-            {
-                if(SocketHandler.sessionMap.containsKey(sessionId))
-                {
-                    if(!SocketHandler.sessionMap.get(sessionId).isOpen())
-                    {
-                        SocketHandler.sessionMap.remove(sessionId);
-                        removeList.add(sessionId);
-                    }
-                }
-                else
-                {
-                    removeList.add(sessionId);
-                }
-            }
-            mObject.sessionIds.removeAll(removeList);
-        }
+//        //當桌面上註冊的sessionId超過一定數量，進行檢查把斷線的給刪除
+//        if(mObject.sessionIds.size() > mObject.subscribedSessionBound)
+//        {
+//            ArrayList<String> removeList = new ArrayList<>();
+//            for (String sessionId : mObject.sessionIds)
+//            {
+//                if(SocketHandler.sessionMap.containsKey(sessionId))
+//                {
+//                    if(!SocketHandler.sessionMap.get(sessionId).isOpen())
+//                    {
+//                        SocketHandler.sessionMap.remove(sessionId);
+//                        removeList.add(sessionId);
+//                    }
+//                }
+//                else
+//                {
+//                    removeList.add(sessionId);
+//                }
+//            }
+//            mObject.sessionIds.removeAll(removeList);
+//        }
 
-        //========這裡開始將Account和sessionId做連結=======
-
-        rootRepository.save(mObject);
+//        rootRepository.save(mObject);
 
         res.put("result","000");
         res.put("message","success");
