@@ -21,6 +21,12 @@ public class SocketHandler extends TextWebSocketHandler {
             throws InterruptedException, IOException {
 
         System.out.println(message.getPayload());
+        if(message.getPayload().equalsIgnoreCase(("KeepAlive")))
+        {
+            Map<String,Object> res = new HashMap<>();
+            res.put("messageType","KEEP_ALIVE");
+            session.sendMessage(new TextMessage(new Gson().toJson(res)));
+        }
 
 //        session.sendMessage(new TextMessage(new Gson().toJson(rootRepository.findByTableId("Room001").detail.toString())));
 
