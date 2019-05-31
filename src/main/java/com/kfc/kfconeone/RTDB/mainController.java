@@ -184,7 +184,7 @@ public class mainController {
         resToPlayer.put("result","100");
         resToPlayer.put("messageType","UPDATE_MESSAGE");
         resToPlayer.put("tableId",tableId);
-        resToPlayer.put("tableId",groupId);
+        resToPlayer.put("groupId",groupId);
         resToPlayer.put("message","table is remove");
         for (Object sessionId :mObject.sessionIds)
         {

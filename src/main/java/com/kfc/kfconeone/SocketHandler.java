@@ -12,9 +12,6 @@ import java.util.*;
 @Component
 public class SocketHandler extends TextWebSocketHandler {
 
-//    @Resource
-//    private RootRepository rootRepository;
-
     public static Map<String,WebSocketSession> sessionMap = new HashMap<>();
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message)
