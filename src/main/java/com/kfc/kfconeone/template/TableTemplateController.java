@@ -42,10 +42,12 @@ public class TableTemplateController {
             Map<String,Object> tempRoot = new HashMap<>();
             tempRoot.put("isQueueTable",root.isQueueTable);
             tempRoot.put("subscribedSessionBound",root.subscribedSessionBound);
+            tempRoot.put("groupId",root.groupId);
             if(root.isQueueTable)
             {
                 tempRoot.put("pushArrayBound",root.pushArrayBound);
                 tempRoot.put("pushTableDetailLength",root.pushTableDetailLength);
+
             }
             tableList.put(root.tableId,tempRoot);
         }
